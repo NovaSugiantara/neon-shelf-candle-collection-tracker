@@ -1,0 +1,14 @@
+{
+  "name": "neon-shelf",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "python3 -m http.server 5173 --bind 127.0.0.1",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test",
+    "size": "node scripts/size.mjs",
+    "build": "npm run typecheck && npm test && npm run size"
+  },
+  "devDependencies": { "typescript": "5.9.3" }
+}
