@@ -1,0 +1,75 @@
+<!doctype html>
+<!-- Walnut catalogue (user approved): personal shelf, ivory labels, amber glass, Literata/Manrope.
+FIRST VIEWPORT: masthead, counts, tabs, vessels; Add top right. Native dialogs guard focus.
+FINISH: ends with finish review, verdict, DESIGN.md -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#251d19">
+<meta name="description" content="A personal shelf for the candles you love and the scents you want to try.">
+<title>Neon Shelf · Your candle collection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Literata:ital,wght@0,400;0,500;1,400&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/modern-normalize@3.0.1/modern-normalize.min.css">
+<link rel="stylesheet" href="styles.css">
+<script type="module" src="src/main.js"></script>
+</head>
+<body>
+<a href="#collection" class="skip">Skip to candles</a>
+<header class="masthead wrap">
+<div class="wordmark"><span class="brand-mark" aria-hidden="true"></span>neon shelf<span class="wordmark-dot">.</span></div>
+<span class="tagline">For the love of a good candle.</span>
+<button class="primary" id="add" data-action="add" disabled><span aria-hidden="true">＋</span> Add candle</button>
+</header>
+<main class="wrap">
+<section class="intro" aria-labelledby="page-title">
+<div><h1 id="page-title">A shelf for<br><em>every scent.</em></h1><p>The ones you love. The ones you’re still dreaming of.</p></div>
+<dl class="summary" aria-label="Collection summary">
+<div><dt>Owned</dt><dd id="owned">0</dd></div>
+<div><dt>Burned through</dt><dd id="finished">0</dd></div>
+<div><dt>Wish list</dt><dd id="wanted">0</dd></div>
+</dl>
+</section>
+<div class="storage-notice" id="storage-notice" hidden><p id="storage-text" role="alert"></p><button data-action="retry">Retry save</button></div>
+<section id="collection" tabindex="-1" aria-label="Candles">
+<div class="collection-bar">
+<div class="tabs" role="tablist" aria-label="Candle lists">
+<button role="tab" id="tab-shelf" aria-selected="true" aria-controls="panel" data-view="shelf">My Shelf <span id="shelf-count">0</span></button>
+<button role="tab" id="tab-wishlist" aria-selected="false" tabindex="-1" data-view="wishlist">Wish List <span id="wish-count">0</span></button>
+</div>
+</div>
+<div id="panel" role="tabpanel" aria-labelledby="tab-shelf" tabindex="0">
+<div id="grid" class="candle-grid" aria-busy="true"><p class="loading">Opening your shelf…</p></div>
+</div>
+</section>
+<p class="announcement" id="announcement" aria-live="polite"></p>
+</main>
+<footer class="wrap footer"><span><span aria-hidden="true">⌁</span> A collection, one candle at a time.</span><span>Stored in this browser only. Clearing site data clears your shelf.</span></footer>
+<noscript><p class="wrap">Enable JavaScript to open and save your candle collection.</p></noscript>
+<dialog id="candle-dialog" aria-labelledby="form-title">
+<form id="candle-form" novalidate>
+<div class="dialog-heading"><h2 id="form-title">Make room for a candle.</h2><button type="button" class="icon-button" data-action="close" aria-label="Close candle form">×</button></div>
+<p class="form-hint">A few details to remember it by. All fields required except rating.</p>
+<div class="form-grid">
+<label class="full" for="list">Keep it on<select id="list" name="list" aria-describedby="error-list"><option value="shelf">My Shelf</option><option value="wishlist">Wish List</option></select><span class="field-error" id="error-list"></span></label>
+<label for="name">Candle name<input id="name" name="name" maxlength="80" required placeholder="e.g. Cedar after rain" aria-describedby="error-name"><span class="field-error" id="error-name"></span></label>
+<label for="brand">Brand<input id="brand" name="brand" maxlength="60" required placeholder="e.g. Sunday Still" aria-describedby="error-brand"><span class="field-error" id="error-brand"></span></label>
+<label class="full" for="scentNotes">Scent notes<textarea id="scentNotes" name="scentNotes" maxlength="200" required rows="2" placeholder="cedar, vanilla, smoke" aria-describedby="error-scentNotes"></textarea><span class="field-error" id="error-scentNotes"></span></label>
+<label class="full" for="vesselStyle">Vessel color / style<input id="vesselStyle" name="vesselStyle" maxlength="80" required placeholder="e.g. Amber glass jar" aria-describedby="error-vesselStyle"><span class="field-error" id="error-vesselStyle"></span></label>
+<div class="owned-fields full" id="owned-fields">
+<label for="burnStatus">Burn status<select id="burnStatus" name="burnStatus" aria-describedby="error-burnStatus"><option value="unlit">Unlit</option><option value="burning">Burning</option><option value="finished">Finished</option></select><span class="field-error" id="error-burnStatus"></span></label>
+<label for="rating">Rating <span class="optional">(optional)</span><select id="rating" name="rating" aria-describedby="error-rating"><option value="">Not rated yet</option><option value="1">★ · 1 / 5</option><option value="2">★★ · 2 / 5</option><option value="3">★★★ · 3 / 5</option><option value="4">★★★★ · 4 / 5</option><option value="5">★★★★★ · 5 / 5</option></select><span class="field-error" id="error-rating"></span></label>
+</div>
+</div>
+<p id="form-error" class="field-error" role="alert"></p>
+<div class="dialog-actions"><button type="button" data-action="close">Cancel</button><button type="submit" class="primary" id="save-button">Add candle</button></div>
+</form>
+</dialog>
+<dialog id="delete-dialog" aria-labelledby="delete-title" aria-describedby="delete-detail">
+<h2 id="delete-title">Remove this candle?</h2><p id="delete-detail"></p>
+<div class="dialog-actions"><button data-action="cancel-delete" autofocus>Keep candle</button><button class="danger" data-action="confirm-delete">Delete candle</button></div>
+</dialog>
+</body>
+</html>

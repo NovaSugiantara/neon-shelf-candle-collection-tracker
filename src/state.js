@@ -1,10 +1,10 @@
 // @ts-check
-/** @import {AppState, Candle, CandleInput, List} from './types.js' */
+/** @import {AppState, Candle, CandleInput, List, SaveResult} from './types.js' */
 import { createCandle, updateCandle, moveToShelf } from './model.js';
 import { loadCollection, saveCollection, storageStatus } from './storage.js';
 
 /** @type {AppState} */
-export const state = { candles: [], view: 'shelf', notice: '', saved: true, message: '' };
+export const state = { candles: [], view: 'shelf', notice: '', saved: true, message: '', error: '', errorCandleId: null, loading: true };
 /** @type {() => void} */
 let notify = () => {};
 /** @param {() => void} render */
@@ -13,16 +13,22 @@ export function initialize(render) {
   state.candles = loadCollection();
   state.notice = storageStatus.notice;
   state.saved = !state.notice;
+  state.error = state.notice;
+  state.errorCandleId = null;
+  state.loading = false;
   notify();
 }
-/** @param {Candle[]} candles @param {string} message */
-function commit(candles, message) {
+/** @param {Candle[]} candles @param {string} message @param {string|null} [errorCandleId] @returns {SaveResult} */
+function commit(candles, message, errorCandleId = null) {
   // ponytail: whole-collection saves suit ~200 candles; indexed storage only if scale demands it.
   state.candles = candles;
   state.saved = saveCollection(candles);
   state.notice = storageStatus.notice;
-  state.message = message;
+  state.error = state.saved ? '' : state.notice || 'Changes could not be saved.';
+  state.errorCandleId = state.saved ? null : errorCandleId;
+  state.message = state.saved ? message : 'Changes kept in this tab, but could not be saved.';
   notify();
+  return { ok: state.saved, error: state.error };
 }
 /** @param {List} view */
 export function setView(view) { state.view = view; state.message = ''; notify(); }
@@ -32,19 +38,19 @@ export function saveCandle(input, id) {
   if (id && !existing) throw new Error('This candle no longer exists. Close the form and try again.');
   const candle = existing ? updateCandle(existing, input) : createCandle(input);
   state.view = candle.list;
-  commit(existing ? state.candles.map(c => c.id === id ? candle : c) : [...state.candles, candle], `${candle.name} ${existing ? 'updated' : 'added'}.`);
+  return commit(existing ? state.candles.map(c => c.id === id ? candle : c) : [...state.candles, candle], `${candle.name} ${existing ? 'updated' : 'added'}.`, candle.id);
 }
 /** @param {string} id @param {Partial<CandleInput>} patch */
 export function changeCandle(id, patch) {
-  commit(state.candles.map(c => c.id === id ? updateCandle(c, patch) : c), 'Candle updated.');
+  return commit(state.candles.map(c => c.id === id ? updateCandle(c, patch) : c), 'Candle updated.', id);
 }
 /** @param {string} id */
 export function purchase(id) {
-  commit(state.candles.map(c => c.id === id ? moveToShelf(c) : c), 'Candle moved to My Shelf.');
+  return commit(state.candles.map(c => c.id === id ? moveToShelf(c) : c), 'Candle moved to My Shelf.', id);
 }
 /** @param {string} id */
-export function removeCandle(id) { commit(state.candles.filter(c => c.id !== id), 'Candle deleted.'); }
-export function retrySave() { commit(state.candles, 'Storage retried.'); }
+export function removeCandle(id) { return commit(state.candles.filter(c => c.id !== id), 'Candle deleted.'); }
+export function retrySave() { return commit(state.candles, 'Storage retried.', state.errorCandleId); }
 export function loadDemo() {
   if (state.candles.length) return;
   /** @type {[string,string,string,string,CandleInput['burnStatus'],number|null,List][]} */

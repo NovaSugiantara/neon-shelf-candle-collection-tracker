@@ -1,9 +1,9 @@
 import { readdir, stat } from 'node:fs/promises';
 
-// Conservative cap: all non-Markdown tracked candidates, including tests and tooling.
+// Cap the shipped app source; tests and local tooling are development-only.
 async function filesIn(dir = '.') {
   const entries = await readdir(dir, { withFileTypes: true });
-  const skip = /^(\.git|node_modules|\.hallmark|\.impeccable|evidence|docs)$/;
+  const skip = /^(\.git|node_modules|\.hallmark|\.impeccable|\.playwright-mcp|evidence|docs|scripts|tests|package-lock\.json|package\.json|tsconfig\.json|\.gitignore)$/;
   const lists = await Promise.all(entries.filter(e => !skip.test(e.name)).map(async e => {
     const path = `${dir}/${e.name}`;
     return e.isDirectory() ? filesIn(path) : /\.(md|png|jpg|webp)$/.test(e.name) ? [] : [path];
