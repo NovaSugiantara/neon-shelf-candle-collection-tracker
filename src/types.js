@@ -6,4 +6,4 @@
 /** @typedef {{totalOwned:number, totalFinished:number, totalWishlist:number}} Summary */
 /** @typedef {{ok:boolean, error:string}} SaveResult */
 /** @typedef {{candles:Candle[], view:List, notice:string, saved:boolean, message:string, error:string, errorCandleId:string|null, loading:boolean}} AppState */
-export {};
+export{};
