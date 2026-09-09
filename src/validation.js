@@ -1,6 +1,6 @@
 // @ts-check
 /** @import {CandleInput} from './types.js' */
-export const statuses=/** @type {const} */["unlit","burning","finished"];export const lists=/** @type {const} */["shelf","wishlist"];export const textFields=/** @type {const} */{name:80,brand:60,scentNotes:200,vesselStyle:80};
+export const statuses=/** @type {const} */(["unlit","burning","finished"]);export const lists=/** @type {const} */(["shelf","wishlist"]);export const textFields=/** @type {const} */({name:80,brand:60,scentNotes:200,vesselStyle:80});
 /**
  * @param {unknown} value
  * @returns {value is Record<string, unknown>}
